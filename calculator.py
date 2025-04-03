@@ -45,7 +45,7 @@ def calculate_expression():
                 continue
 
             # Ждём оператор
-            operator = input("Введите оператор (+, -, *, /): ").strip()
+            operator = input("Введите оператор (+, -, *, /): ")
             if operator not in operations:
                 print("Ошибка: неверный формат ввода. Попробуйте снова.")
                 continue
