@@ -9,7 +9,8 @@ class BasicCalc:
             '/': self.divide
         }
 
-    @staticmethod # Каждый метод делаю статическим с помощью декоратора, без использвания параметра self
+    # Каждый метод делаю статическим с помощью декоратора, без использвания параметра self
+    @staticmethod
     def add(a, b=None):
         if b is None:
             if hasattr(a, '__iter__'):
@@ -23,7 +24,6 @@ class BasicCalc:
         return a - b
 
     @staticmethod
-
     def multiply(a, b):
         return a * b
 
@@ -37,79 +37,42 @@ class NewCalc(BasicCalc):
 
     def __init__(self):
         super().__init__()
-        self._memory_stack = []
-        self.operations.update({ # Обновляю словарь operations, чтобы NewCalc мог использовать свои обновленные функции
-            '+': self.add,
-            '-': self.subtract,
-            '*': self.multiply,
-            '/': self.divide,
-            'mp': self.memo_plus,
-            'mm': self.memo_minus,
-            'mtop': self._memo_top
-        })
+        self.memory_stack = []
 
+    # Упрощенные арифметические методы т.к есть универсальный метод для работы с памятью
     def add(self, a, b=None):
-        if b is None:
-            if not self._memory_stack:
-                return None
-            result = BasicCalc.add(self._memory_stack[-1], a)
-        else:
-            result = BasicCalc.add(a, b)
-        if result is not None:
-            self.memo_plus(result)
-        return result
+        return self._perform_operation(super().add, a, b)
 
     def subtract(self, a, b=None):
-        if b is None:
-            if not self._memory_stack:
-                return None
-            result = BasicCalc.subtract(self._memory_stack[-1], a)
-        else:
-            result = BasicCalc.subtract(a, b)
-        if result is not None:
-            self.memo_plus(result)
-        return result
+        return self._perform_operation(super().subtract, a, b)
 
     def multiply(self, a, b=None):
-        if b is None:
-            if not self._memory_stack:
-                return None
-            result = BasicCalc.multiply(self._memory_stack[-1], a)
-        else:
-            result = BasicCalc.multiply(a, b)
-        if result is not None:
-            self.memo_plus(result)
-        return result
+        return self._perform_operation(super().multiply, a, b)
 
     def divide(self, a, b=None):
-        if b is None:
-            if not self._memory_stack:
-                return None
-            result = BasicCalc.divide(self._memory_stack[-1], a)
-        else:
-            result = BasicCalc.divide(a, b)
-        if result is not None:
-            self.memo_plus(result)
-        return result
+        return self._perform_operation(super().divide, a, b)
 
     def memo_plus(self, value):
-        if len(self._memory_stack) < self.memory_size:
-            self._memory_stack.append(value)
-            return True
+        if len(self.memory_stack) < self.memory_size:
+            self.memory_stack.append(value)
         else:
-            return None
+            print(f"Ошибка: память заполнена (максимум {self.memory_size}).")
+        return value
 
     def memo_minus(self):
-        if self._memory_stack:
-            return self._memory_stack.pop()
+        if self.memory_stack:
+            return self.memory_stack.pop()
         else:
-            return None
+            raise ValueError("Ошибка: память пуста.")
 
     @property
     def memo_top(self):
-        if self._memory_stack:
-            return self._memory_stack[-1]
+        if self.memory_stack:
+            return self.memory_stack[-1]
         return None
 
-    def _memo_top(self):  # Внутренний метод для вызова через 'mtop' в operations
-        return self.memo_top
+    # Универсальный метод для вычеслений с памятью
+    def _perform_operation(self, operation, a, b):
+        if b is None:
+            b = self.memo_minus()
+        return self.memo_plus(operation(a, b))
