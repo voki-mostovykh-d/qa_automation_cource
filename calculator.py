@@ -1,10 +1,12 @@
 from basic_calc_module import NewCalc
 import re
 
+
 def calculate_expression():
     calculator = NewCalc()
     while True:
-        expression = input("Введите математическое выражение целиком (например, 1.2+3) или число c оператором для работы с памятью (+5, *2): \n" )
+        expression = input(
+            "Введите математическое выражение целиком (например, 1.2+3) или число c оператором для работы с памятью (+5, *2): \n")
 
         # Если ввели выражение целиком
         match_expression = re.fullmatch(r'^(\d+(\.\d+)?)([+\-*/])(\d+(\.\d+)?)$', expression)
@@ -26,6 +28,7 @@ def calculate_expression():
                     print("Ошибка: память пуста.")
                 else:
                     print(f"Результат: {result}, Память: {calculator.memo_top}")
+
 
 if __name__ == "__main__":
     calculate_expression()

@@ -31,6 +31,7 @@ class BasicCalc:
     def divide(a, b):
         return a / b
 
+
 # Создаю класс-наследник BasicCalc
 class NewCalc(BasicCalc):
     memory_size = 3
